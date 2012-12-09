@@ -7,6 +7,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    <script>
+    (function() {
+      var wf = document.createElement('script');
+      wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+          '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+      wf.type = 'text/javascript';
+      wf.async = 'true';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(wf, s);
+    })()
+    </script>
+
     <!-- Le styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <style>
@@ -173,7 +185,13 @@
           wiggleText.css('font-style', variant);
         }
         wiggleText.fitText(0.4);
-        wiggleText.fadeIn(700);
+        
+        WebFont.load({
+          google: { families: [ font.family ] },
+          active: function() {
+            wiggleText.fadeIn(700);
+          }
+        });
       }
 
       $(function(){
