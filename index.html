@@ -188,7 +188,7 @@
         WebFont.load({
           google: { families: [ font.family ] },
           active: function() {
-            wiggleText.fitText(0.4);
+            $(window).trigger('resize');
             wiggleText.fadeIn(700);
           }
         });
@@ -206,6 +206,8 @@
           dataType: 'jsonp',
           crossDomain: true
         });
+
+        wiggleText.fitText(0.5);
 
         var _currentStyle = wiggleText.attr('style');
         $('#refresh-font').on('click', function(){
