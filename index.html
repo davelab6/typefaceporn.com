@@ -7,18 +7,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <script>
-    (function() {
-      var wf = document.createElement('script');
-      wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-          '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-      wf.type = 'text/javascript';
-      wf.async = 'true';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(wf, s);
-    })()
-    </script>
-
     <!-- Le styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <style>
@@ -28,6 +16,7 @@
 
       .fontname {
         text-align: right;
+        margin-bottom: 36px;
       }
 
              /* safari and chrome */
@@ -49,18 +38,12 @@
                 50% {left:10px;}
                 100% {left:0px;}
       }
-
       .wiggle {
-      display: none;
-      font-size:100px;
-      line-height: 100px;
-      position: relative;
-	white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-	white-space: -pre-wrap; /* Opera 4 - 6 */
-	white-space: -o-pre-wrap; /* Opera 7 */
-	white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
-	word-wrap: break-word; /* IE 5.5+ */
-      top:0px;
+          line-height: 1em;
+      }
+
+      .wiggle-container {
+        margin-bottom: 64px;
       }
 
       .wiggle:hover {
@@ -138,117 +121,143 @@
 	    </div>
 	    </div>
 
+      <div id="wiggles">
 
-      <p id="font-name" class="fontname"></p>
-    <h2 class="wiggle">sexy bell-bottom jeans and a fuzzy cape? I've awoken in the age of aquarius!</h2>
-
+      </div>
+      
     </div> <!-- /container -->
 
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/underscore.min.js"></script>
+    <script src="assets/js/backbone-min.js"></script>
     <script src="assets/js/jquery.fittext.js"></script>
+    <script src="assets/js/tools.js"></script>
+    <script src="assets/js/webfont.js"></script>
 
     <script>
-
-      function getWiggleLetters(str) {
-        var letters = [];
-        var str = str.replace(/\s/g, '');
-        for(x = 0, length = str.length; x < length; x++) {
-          var l = str.charAt(x);
-          if (letters.indexOf(l) < 0) {
-            letters.push(l);
-          }
-        }
-        return escape(letters.join(''));
-      }
-
-      var GWF_APIKEY = 'AIzaSyBKEIQeLtpWJgZ8rqSPGoy5NgzqOoqlJIY';
-      var wiggleText = $('.wiggle');
-
-      var wiggleLetters = getWiggleLetters(wiggleText.text());
-      wiggleText.fitText(0.4);
-
-      var _currentFont;
-      var _fontCache;
-
-      var _DOM_fontName = $('#font-name');
-      var _DOM_HrefFontName = $('<a>').attr('target', '_blank');
-
-      $.fn.random = function() {
-          var randomIndex = Math.floor(Math.random() * this.length);
-          return this[randomIndex];
-      };
-
-      function refreshSpeciment(fontFamily) {
-        _DOM_HrefFontName.attr('href', 'http://www.google.com/webfonts/specimen/'+fontFamily);
-        _DOM_HrefFontName.html(fontFamily);
-
-        var tmp = $(_DOM_HrefFontName.wrap('<div></div>').parent());
-        _DOM_fontName.html(tmp.html());
-      }
-
-      function setupWiggleText(font) {
-        var font_url = 'http://fonts.googleapis.com/css?family=' + font.family + '&text=' + wiggleLetters;
-        var variant = $(font.variants).random();
-
-        if (_currentFont) {
-          _currentFont.remove();
-        }
-
-        _currentFont = $('<link>').attr('href', font_url).attr('rel', 'stylesheet').attr('type', 'text/css');
-        $('head').append(_currentFont);
-
-        wiggleText.css('font-family', font.family)
-        if (variant) {
-          wiggleText.css('font-style', variant);
-        }
-        
-        WebFont.load({
-          google: { families: [ font.family ] },
-          active: function() {
-            _DOM_fontName.fadeIn(700);
-            wiggleText.fadeIn(700);
-            $(window).trigger('resize');
-            refreshSpeciment(font.family);
-          }
-        });
-      }
-
       $(function(){
-        var webfonts_url = 'https://www.googleapis.com/webfonts/v1/webfonts';
-        $.ajax({
-          url: webfonts_url,
-          data: {key: GWF_APIKEY},
-          success: function(data, textStatus, jqXHR) {
-            _fontCache = $(data.items);
-            setupWiggleText(_fontCache.random());
+        var Font = Backbone.Model.extend({});
+        var GWF = Backbone.Collection.extend({
+          _WEBFONT_URL: 'https://www.googleapis.com/webfonts/v1/webfonts',
+          _GWF_APIKEY: 'AIzaSyBKEIQeLtpWJgZ8rqSPGoy5NgzqOoqlJIY',
+
+          model: Font,
+
+          load: function()  {
+            var $this = this;
+            $.ajax({
+              url: this._WEBFONT_URL,
+              data: {key: this._GWF_APIKEY},
+              success: function(data, textStatus, jqXHR) {
+                $(data.items).each(function(idx, font) {
+                  $this.add(
+                    new Font({ 
+                      'family': font.family, 
+                      'spec_url': 'http://www.google.com/webfonts/specimen/'+escape(font.family) 
+                    })
+                  );
+                });
+                $this.trigger('fonts:loaded');
+              },
+              dataType: 'jsonp',
+              crossDomain: true
+            });
           },
-          dataType: 'jsonp',
-          crossDomain: true
+
+          getFont: function() {
+            return $(this.models).random();
+          }
         });
 
-        var _currentStyle = wiggleText.attr('style');
-        $('#refresh-font').on('click', function(){
-          _DOM_fontName.fadeOut(400);
-          wiggleText.fadeOut(400, function() {
-            setupWiggleText(_fontCache.random());
-          });
-        })
+
+        var Wiggle = Backbone.Model.extend({});
+        var WiggleList = Backbone.Collection.extend({model: Wiggle});
+
+        var WiggleView = Backbone.View.extend({
+
+          template: _.template($('#wiggle-template').html()),
+
+          initialize: function() {
+            this.$el.html(this.template());
+            this._wiggle = this.$el.find('.wiggle');
+          },
+
+          refreshSpeciment: function (font) {
+            var _DOM_fontName = this.$el.find('.fontname');
+
+            var _DOM_HrefFontName = $('<a>').attr('target', '_blank');
+            _DOM_HrefFontName.attr('href', font.get('spec_url'));
+            _DOM_HrefFontName.html(font.get('family'));
+
+            var tmp = $(_DOM_HrefFontName.wrap('<div></div>').parent());
+            _DOM_fontName.html(tmp.html());
+          },
+
+          render: function() {
+            font = this.model.get('font');
+
+            this._wiggle.css('font-family', font.get('family'));
+            this._wiggle.text(this.model.get('text'));
+            this.refreshSpeciment(font);
+
+            this._wiggle.fitText(5);
+            return this;
+          },
+        });
+
+        var AppView = Backbone.View.extend({
+          el: '#wiggles',
+
+          text_: "sexy bell-bottom jeans and a fuzzy cape? I've awoken in the age of aquarius!",
+          letters_: getLetters("sexy bell-bottom jeans and a fuzzy cape? I've awoken in the age of aquarius!"),
+
+          initialize: function() {
+            this.fonts = new GWF;
+            this.wiggles = new WiggleList;
+            this.listenTo(this.fonts, 'fonts:loaded', this.loaded);
+            this.fonts.load();
+          },
+
+          loaded: function() {
+            for (var i = 0; i < this.fonts.length; i++) {
+              var wModel = new Wiggle({font: this.fonts.models[i], text: this.text_});
+              var wView = new WiggleView({model: wModel})
+
+              this.wiggles.add(wModel);
+              this.startRender(wView, this.fonts.models[i].get('family'));
+            }
+          },
+
+          startRender: function(view, fontFamily) {
+            var $this = this;
+            WebFont.load({
+              google: { families: [ fontFamily ], text: this.letters_ },
+              fontactive: function(fontFamily) {
+                $this.$el.append(view.render().$el);
+                $this.$el.fadeIn(200);
+                $this.$el.trigger('resize');
+              },
+              fontinactive: function(fontFamily) {
+                console.log('ERROR: ' + fontFamily + ' has been activated');
+              }
+            });
+          }
+        });
+
+        new AppView();
       });
+    </script>
+
+    <script type="text/template" id="wiggle-template">
+    <div class="wiggle-container">
+      <div class="fontname"></div>
+      <div class="wiggle">
+        <div></div>
+      </div>
+    </div>
     </script>
   </body>
 </html>
