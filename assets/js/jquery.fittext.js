@@ -39,7 +39,7 @@ $.fn.textWidth = function(){
       var resizer = function () {
         var height = Math.max(Math.min($this.width() / (compressor*10), parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize));
         $this.css('font-size', height);
-        $this.css('font-size', Math.floor($this.width() * height / $this.textWidth()));
+        $this.css('font-size', $this.width() * height / $this.textWidth());
       };
 
       // Call once to set.
