@@ -40,6 +40,8 @@
       }
       .wiggle {
           line-height: 1em;
+          white-space: nowrap;
+          height: 35px;
       }
 
       .wiggle-container {
@@ -203,7 +205,7 @@
             this._wiggle.text(this.model.get('text'));
             this.refreshSpeciment(font);
 
-            this._wiggle.fitText(5);
+            this._wiggle.fitText();
             return this;
           },
         });
@@ -222,7 +224,7 @@
           },
 
           loaded: function() {
-            for (var i = 0; i < this.fonts.length; i++) {
+            for (var i = 0; i < 4; i++) {
               var wModel = new Wiggle({font: this.fonts.models[i], text: this.text_});
               var wView = new WiggleView({model: wModel})
 
