@@ -42,6 +42,7 @@
           line-height: 1em;
           white-space: nowrap;
           height: 35px;
+          text-align: justify;
       }
 
       .wiggle-container {
@@ -224,7 +225,7 @@
           },
 
           loaded: function() {
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < this.fonts.length; i++) {
               var wModel = new Wiggle({font: this.fonts.models[i], text: this.text_});
               var wView = new WiggleView({model: wModel})
 
@@ -243,7 +244,7 @@
                 $this.$el.trigger('resize');
               },
               fontinactive: function(fontFamily) {
-                console.log('ERROR: ' + fontFamily + ' has been activated');
+                console.log('ERROR: ' + fontFamily + ' has not been activated');
               }
             });
           }
