@@ -9,6 +9,16 @@
 * Date: Thu May 05 14:23:00 2011 -0600
 */
 
+$.fn.textWidth = function(){
+  var html_org = $(this).html();
+  var html_calc = '<span>' + html_org + '</span>';
+  $(this).html(html_calc);
+  var width = $(this).find('span:first').width();
+  $(this).html(html_org);
+  return Math.floor(width);
+};
+
+
 (function( $ ){
 	
   $.fn.fitText = function( kompressor, options ) {
@@ -27,7 +37,9 @@
         
       // Resizer() resizes items based on the object width divided by the compressor * 10
       var resizer = function () {
-        $this.css('font-size', Math.max(Math.min($this.width() / (compressor*10), parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)));
+        var height = Math.max(Math.min($this.width() / (compressor*10), parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize));
+        $this.css('font-size', height);
+        $this.css('font-size', $this.width() * height / $this.textWidth());
       };
 
       // Call once to set.

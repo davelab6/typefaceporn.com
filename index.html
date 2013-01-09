@@ -40,6 +40,9 @@
       }
       .wiggle {
           line-height: 1em;
+          white-space: nowrap;
+          height: 35px;
+          text-align: justify;
       }
 
       .wiggle-container {
@@ -203,7 +206,7 @@
             this._wiggle.text(this.model.get('text'));
             this.refreshSpeciment(font);
 
-            this._wiggle.fitText(5);
+            this._wiggle.fitText();
             return this;
           },
         });
@@ -241,7 +244,7 @@
                 $this.$el.trigger('resize');
               },
               fontinactive: function(fontFamily) {
-                console.log('ERROR: ' + fontFamily + ' has been activated');
+                console.log('ERROR: ' + fontFamily + ' has not been activated');
               }
             });
           }
